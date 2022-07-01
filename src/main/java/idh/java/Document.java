@@ -1,12 +1,14 @@
 package idh.java;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FileUtils;
 
-
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.StringTokenizer;
-
-import org.apache.commons.io.FileUtils;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 public class Document implements Iterable<String> {
 	String documentText;
@@ -28,18 +30,81 @@ public class Document implements Iterable<String> {
 	}
 	
 	public void printStats(File f) {
-		// TODO: Implement
+		try {
+
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(f.getAbsolutePath()));
+			ArrayList<String> arrayList = new ArrayList();
+
+			Set<String> stringSet = new HashSet();
+
+			this.getDocumentText();
+			this.iterator();
+
+			HashMap<String, Stack<String>> stackHashMap = new HashMap<>();
+
+			int h = 0;
+
+			for(String token : this) {
+				arrayList.add(token);
+				stringSet.add(token);
+
+				if(!(stackHashMap.containsKey(token))) {
+					stackHashMap.put(token, new Stack<>());
+					Stack<String> i = stackHashMap.get(token);
+
+					i.push(token);
+				}else {
+
+					Stack<String> i = stackHashMap.get(token);
+					i.push(token);
+				}
+
+			}
+			int m = 0;
+			int mostWord = 0;
+			String mostUsedWord  = "";
+
+			for(Stack<String> value : stackHashMap.values()) {
+				m = value.size();
+
+				if(m > mostWord) {
+					mostWord = m;
+					mostUsedWord = value.get(0);
+				}
+
+			}
+
+			System.out.println("Das meist benutze Wort ist: " + mostUsedWord);
+			int size = arrayList.size();
+
+			float count = arrayList.stream().filter(s -> s.length() < 5).count();
+			float blood =  arrayList.stream().filter(s -> s.contains("blood")).count();
+			int differentw = stringSet.size();
+
+			CSVPrinter csvprinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(
+					"AnzahlDerWorte", "Worte < 5", "VerschiedeneWorte", "Am MeistenBenutzt", "wie oft blood vorkommt",
+					"das am häufigsten vorkommende großgeschriebene Wort")
+			);
+
+			csvprinter.printRecord(size,count, differentw,blood,mostUsedWord);
+			csvprinter.flush();
+			csvprinter.close();
+
+		}catch(IOException e ) {
+			e.printStackTrace();
+		}
+
 	}
-	
-	public static final void main(String[] args) throws IOException {
+
+	public static void main(String[] args) throws IOException {
 		Document d = Document.readFromFile(new File("src/main/resources/dracula.txt"));
 		d.printStats(new File("target/stats.csv"));
 	}
 
 	public Iterator<String> iterator() {
-		return new Iterator<String>() {
+		return new Iterator<>() {
 
-			StringTokenizer tokenizer = new StringTokenizer(documentText);
+			final StringTokenizer tokenizer = new StringTokenizer(documentText);
 			
 			@Override
 			public boolean hasNext() {
