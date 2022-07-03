@@ -43,10 +43,13 @@ public class Document implements Iterable<String> {
 		
 		
 		BufferedReader bWriter = Files.newBufferedReader(Paths.get(f.getAbsolutePath()));
+		
 		ArrayList<String> List = new ArrayList<String>();
+		
 		Set<String> DifferentWords = new HashSet<>();
 		this.getDocumentText();
 		this.iterator();
+		
 		HashMap<String, Stack> MostUsed = new HashMap<String, Stack>();
 		int c = 0;
 		
