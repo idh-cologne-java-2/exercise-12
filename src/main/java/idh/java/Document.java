@@ -32,7 +32,7 @@ public class Document implements Iterable<String> {
 	public void printStats(File f) {
 		try {
 
-			BufferedWriter writer = Files.newBufferedWriter(Paths.get(f.getAbsolutePath()));
+			BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(f.getAbsolutePath()));
 			ArrayList<String> arrayList = new ArrayList();
 
 			Set<String> stringSet = new HashSet();
@@ -81,7 +81,7 @@ public class Document implements Iterable<String> {
 			float blood =  arrayList.stream().filter(s -> s.contains("blood")).count();
 			int differentw = stringSet.size();
 
-			CSVPrinter csvprinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(
+			CSVPrinter csvprinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader(
 					"AnzahlDerWorte", "Worte < 5", "VerschiedeneWorte", "Am MeistenBenutzt", "wie oft blood vorkommt",
 					"das am häufigsten vorkommende großgeschriebene Wort")
 			);
