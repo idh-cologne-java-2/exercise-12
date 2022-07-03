@@ -82,7 +82,7 @@ public class Document implements Iterable<String> {
 			int differentw = stringSet.size();
 
 			CSVPrinter csvprinter = new CSVPrinter(bufferedWriter, CSVFormat.DEFAULT.withHeader(
-					"AnzahlDerWorte", "Worte < 5", "VerschiedeneWorte", "Am MeistenBenutzt", "wie oft blood vorkommt",
+					"Anzahl Worte", "Worte < 5", "verschiedene Worte", "meisten benutzt", "wie oft blood vorkommt",
 					"das am häufigsten vorkommende großgeschriebene Wort")
 			);
 
