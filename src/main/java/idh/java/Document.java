@@ -1,10 +1,14 @@
 package idh.java;
 
-
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 
@@ -27,8 +31,56 @@ public class Document implements Iterable<String> {
 		this.documentText = documentText;
 	}
 	
-	public void printStats(File f) {
+	public void printStats(File f) throws IOException {
 		// TODO: Implement
+		f.createNewFile();
+		FileWriter fw = new FileWriter(f);
+		fw.append("Anzahl der Wörter,"
+				+ "Anzahl der Types,"
+				+ "Anzahl der Wörter die kürzer sind als 5, "
+				+ "Häufigkeit des Wortes \"blood\","
+				+ "Das am häufigsten vorkommende Wort,"
+				+ "Das am häufigsten vorkommende großgeschriebene Wort"
+				+ "\n");
+		String[] words = this.documentText.split(" ");
+		ArrayList<String> al = new ArrayList<String>();
+		
+		for(String token : this) {
+			al.add(token);
+		}
+		
+		long word = al.stream().count();
+		long types = al.stream().distinct().count();
+		long shortwords = al.stream().filter(w -> w.length() < 5).count();
+		long blood = al.stream().filter(b -> b.equals("blood")).count();
+		String mostFrequent = al.stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+				.entrySet()
+				.stream()
+				.max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey).orElse("");
+		String mostFrequentUppercase = al.stream().filter(u -> u.toCharArray()[0] == u.toUpperCase().toCharArray()[0])
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+				.entrySet()
+				.stream()
+				.max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey).orElse("");
+		
+		fw.append(word + ","
+				+ types + ","
+				+ shortwords + ","
+				+ blood + ","
+				+ mostFrequent + ","
+				+ mostFrequentUppercase
+				+ "\n");
+		fw.flush();
+		fw.close();
+		System.out.println(word);
+		System.out.println(types);
+		System.out.println(shortwords);
+		System.out.println(blood);
+		System.out.println(mostFrequent);
+		System.out.println(mostFrequentUppercase);
 	}
 	
 	public static final void main(String[] args) throws IOException {
