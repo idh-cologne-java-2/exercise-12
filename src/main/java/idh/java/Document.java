@@ -27,8 +27,20 @@ public class Document implements Iterable<String> {
 		this.documentText = documentText;
 	}
 	
+	//versuch war es wert
 	public void printStats(File f) {
-		// TODO: Implement
+		 int wordCount = 0;
+	        int characterCount = 0;
+	        int whiteSpaceCount = 0;
+	        int sentenceCount = 0;
+	System.out.println("Total word count = "
+             + wordCount);
+System.out.println("Total number of sentences = "
+             + sentenceCount);
+System.out.println("Total number of characters = "
+             + characterCount);
+System.out.println("Total number of whitespaces = "
+             + whiteSpaceCount);
 	}
 	
 	public static final void main(String[] args) throws IOException {
