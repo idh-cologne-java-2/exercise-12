@@ -41,15 +41,13 @@ public class Document implements Iterable<String> {
 		for (String token : this)
 			tokens.add(token);
 		CSVPrinter p = new CSVPrinter(new FileWriter(f), CSVFormat.EXCEL);
-		p.printRecord("Anzahl der W√∂rter", "Anzahl der Types", "Anzahl der W√∂rter die k√ºrzer sind als 5 Zeichen", "H√§ufigkeit des Wortes 'blood'", "Das am h√§ufigsten vorkommende Wort",
-				"Das am h√§ufigsten vorkommende gro√ügeschriebene Wort");
+		p.printRecord("Anzahl der Wˆrter", "Anzahl der Types", "Anzahl der Wˆrter die k¸rzer sind als 5 Zeichen", "H‰ufigkeit des Wortes 'blood'", "Das am h‰ufigsten vorkommende Wort",
+				"Das am h‰ufigsten vorkommende groﬂgeschriebene Wort");
 		p.print(tokens.stream().count());
 		p.print(tokens.stream().distinct().count());
 		p.print(tokens.stream().filter(s -> s.length() < 5).count());
 		p.print(tokens.stream().filter(s -> s.equals("blood")).count());
 
-		// Das am h√§ufigsten vorkommende Wort
-		// Einfach aus der Musterl√∂sung √ºbernommen, da keinen eigenen L√∂sungsweg gefunden.
 		
 		String mft = null;
 		long frequency = 0;
