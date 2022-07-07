@@ -1,12 +1,14 @@
 package idh.java;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.apache.commons.csv.*;
 import org.apache.commons.io.FileUtils;
+
 
 public class Document implements Iterable<String> {
 	String documentText;
@@ -28,8 +30,34 @@ public class Document implements Iterable<String> {
 	}
 	
 	public void printStats(File f) {
-		// TODO: Implement
+		this.getDocumentText();
+		this.iterator();
+		ArrayList<String> words = new ArrayList<String>();
+		
+		for (String token : this) {
+			words.add(token);
+		}
+		
+		long laenge = words.stream().count();
+		long worte = words.stream().distinct().count();
+		long kurz = words.stream().filter(s -> (s.length()<5)).count();
+		long blood = words.stream().filter(s -> s.contains("blood")).count();
+		String oft = words.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()
+						.max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("");
+		String oftGross = words.stream().filter(u -> u.toCharArray()[0] == u.toUpperCase().toCharArray()[0])
+							.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()
+							.max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("");
+				
+		try (CSVPrinter printer = new CSVPrinter(new FileWriter(f), CSVFormat.EXCEL)) {
+		     printer.printRecord("Anzahl der Wörter", "Anzahl unterschiedlicher Worte", "Worte kürzer als 5 Zeichen", "Häufigkeit von 'Blood'", "Häufigstes Wort", "Häufigstes großgeschriebenes Wort");
+		     printer.printRecord(laenge, worte, kurz, blood, oft, oftGross);
+		 } catch (IOException ex) {
+		     ex.printStackTrace();
+		 }
+		
 	}
+	
+	
 	
 	public static final void main(String[] args) throws IOException {
 		Document d = Document.readFromFile(new File("src/main/resources/dracula.txt"));
