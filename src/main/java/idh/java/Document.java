@@ -2,10 +2,18 @@ package idh.java;
 
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
 
 public class Document implements Iterable<String> {
@@ -27,8 +35,79 @@ public class Document implements Iterable<String> {
 		this.documentText = documentText;
 	}
 	
-	public void printStats(File f) {
-		// TODO: Implement
+	public void printStats(File f) throws IOException {
+		List<String> tokens = new ArrayList<String>();
+		for(String token : this) {
+			tokens.add(token);
+		}
+		
+		CSVPrinter p = new CSVPrinter(new FileWriter(f), CSVFormat.EXCEL);
+		p.printRecord("Anzahl Wörter", "Anzahl Types", "< 5 Zeichen", "blood", "Most frequent token",
+				"Most frequent upper case token");
+		
+		// Anzahl Wörter
+		p.print(tokens.stream().count());
+		
+		//Anzahl Types
+		p.print(tokens.stream().distinct().count());
+		
+		//Anzahl der Wörter die kürzer sind als 5 Zeichen
+		p.print(tokens.stream().filter(s -> s.length() < 5).count());
+		
+		//Häufigkeit des Wortes "blood"
+		p.print(tokens.stream().filter(s -> s.equals("blood")).count());
+		
+		//Das am häufigsten vorkommende Wort
+//		long n = 0;
+//		long m = 0;
+//		
+//		for(String token : this) {
+//			m = tokens.stream().distinct().count();
+//			if(m > n) {
+//				n = m;
+//			}
+//		}
+//		p.print(n);
+		String mft = null;
+		long frequency = 0;
+		Map<String, Long> ft = tokens.stream()
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+		for (String token : ft.keySet()) {
+			if (ft.get(token) > frequency) {
+				frequency = ft.get(token);
+				mft = token;
+			}
+		}
+
+		p.print(mft);
+		
+		//Das am häufigsten vorkommende großgeschriebene Wort
+//		n = 0;
+//		m = 0;
+//		
+//		for(String token : this) {
+//			m = tokens.stream().distinct().filter(s -> Character.isUpperCase(s.charAt(0))).count();
+//			if(m > n) {
+//				n = m;
+//			}
+//		}
+//		p.print(n);
+//		p.close();
+		mft = null;
+		frequency = 0;
+		ft = tokens.stream().filter(s -> Character.isUpperCase(s.charAt(0)))
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+		
+		for (String token : ft.keySet()) {
+			if (ft.get(token) > frequency) {
+				frequency = ft.get(token);
+				mft = token;
+			}
+		}
+
+		p.print(mft);
+		p.close();
+		
 	}
 	
 	public static final void main(String[] args) throws IOException {
