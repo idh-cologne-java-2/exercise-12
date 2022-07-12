@@ -46,24 +46,24 @@ public class Document implements Iterable<String> {
 		long types = fl.stream().distinct().count();
 		long shortTokens = fl.stream().filter(s -> s.length() < 5).count();
 		long blood = fl.stream().filter(b -> b.contains("blood")).count();
-		String mostFrequentWord = fl.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+		String mostCommonWord = fl.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
 				.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("");
-		String mostUppercaseWord = fl.stream().filter(u -> u.toCharArray()[0] == u.toUpperCase().toCharArray()[0])
+		String mostCapitalizedWord = fl.stream().filter(u -> u.toCharArray()[0] == u.toUpperCase().toCharArray()[0])
 				.collect(Collectors.groupingBy(Function.identity(),
 				Collectors.counting())).entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("");
 		
 		
-		file.append(allWords + "," + types + "," + shortTokens + "," + blood + "," + mostFrequentWord + "," + mostUppercaseWord + "\n");
+		file.append(allWords + "," + types + "," + shortTokens + "," + blood + "," + mostCommonWord + "," + mostCapitalizedWord + "\n");
 		
 		file.flush();
 		file.close();
 		
-		System.out.println("Gesamtwörter: " + allWords);
-		System.out.println("Anzahl der Types " + types);
-		System.out.println("Wörter unter 5 Zeichen: " + shortTokens);
-		System.out.println("Häufigkeit des Wortes Blut: " + blood);
-		System.out.println("Häufigstes Wort: " + mostFrequentWord);
-		System.out.println("Häufigstes großgeschriebenes Wort " + mostUppercaseWord);
+		System.out.println("Total words: " + allWords);
+		System.out.println("Types of words: " + types);
+		System.out.println("Words under five signs: " + shortTokens);
+		System.out.println("Frequency of the word blood: " + blood);
+		System.out.println("Most common word: " + mostCommonWord);
+		System.out.println("Most frequently capitalized word " + mostCapitalizedWord);
 	}
 	
 	public static final void main(String[] args) throws IOException {
